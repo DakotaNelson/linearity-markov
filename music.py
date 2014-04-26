@@ -74,7 +74,7 @@ def whichNote(stateArray,notes=['a','d','g']):
 
 def createWav(notes):
     audioPhile = [] # Get it, it's funny because audio file sounds like audiophile
-    maxAmplitude = 32767.0
+    maxAmplitude = 30000.0
 
     for note in notes:
         tone = generateTone(note) # generate 1 second of that note
@@ -103,7 +103,11 @@ def generateTone(note):
     noteLookup = {'d':293.665,'a':440,'g':391.995}
     frequency = noteLookup[note]
     for i in range(framerate): # for 1 second
-        tone.append(math.sin(2.0*math.pi*float(frequency)*(float(i)/float(framerate))))
+        wave = math.sin(2.0*math.pi*float(frequency)*(float(i)/float(framerate))) #fundamental wave
+        wave += math.sin(2.0*math.pi*float(2.0*frequency)*(float(i)/float(framerate))) #add first harmonic
+        wave += math.sin(2.0*math.pi*float(3.0*frequency)*(float(i)/float(framerate))) #add second  harmonic
+        wave /= 3 # adding harmonics has made our waveform too big
+        tone.append(wave)
     return tone
 
 # NOTE: this should really be turned into a class. noteLookup should be a member
