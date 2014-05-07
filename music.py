@@ -47,7 +47,7 @@ def samplingWheel(a):
     else:
         return numpy.matrix([[0],[0],[1]])
 
-def generateMusic(length=10):
+def generateMusic(length=10): # length = number of half-second notes
     currentState = [[1],[0],[0]] # Arbitrarily start on an 'a' note for now
     prevState = [[0],[1],[0]] # And arbitrarily decide we just came off a 'd' note
     notes = []
@@ -77,7 +77,7 @@ def createWav(notes):
     maxAmplitude = 30000.0
 
     for note in notes:
-        tone = generateTone(note) # generate 1 second of that note
+        tone = generateTone(note) # generate 1/2 second of that note
         audioPhile.extend(tone)
 
     w = wave.open('soundfile.wav','w')
@@ -97,16 +97,17 @@ def createWav(notes):
     w.close()
 
 def generateTone(note):
-    # generates 1 second of sine wave in a note's frequency
+    # generates 1/2 second of sine wave in a note's frequency
     tone = []
+    harmonics = 3
     framerate = 44100
     noteLookup = {'d':293.665,'a':440,'g':391.995}
     frequency = noteLookup[note]
-    for i in range(framerate): # for 1 second
+    for i in range(framerate): # for 1/2 second
         wave = math.sin(2.0*math.pi*float(frequency)*(float(i)/float(framerate))) #fundamental wave
-        wave += math.sin(2.0*math.pi*float(2.0*frequency)*(float(i)/float(framerate))) #add first harmonic
-        wave += math.sin(2.0*math.pi*float(3.0*frequency)*(float(i)/float(framerate))) #add second  harmonic
-        wave /= 3 # adding harmonics has made our waveform too big
+        for h in range(harmonics):
+            wave = math.sin(2.0*math.pi*float(float(h)*frequency)*(float(i)/float(framerate))) # add a harmonic
+        wave /= harmonics
         tone.append(wave)
     return tone
 
